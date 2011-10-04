@@ -17,6 +17,11 @@ Vagrant::Config.run do |config|
     chef.json.merge!({
       :omeka => {
         :version => 'stable-1.4',
+        :plugins => [
+          {:name => 'Neatline', :url => 'git@github.com:scholarslab/Neatline.git'},
+          {:name => 'NeatlineMaps', :url => 'git@github.com:scholarslab/NeatlineMaps.git'},
+          {:name => 'NeatlineTime', :url => 'git@github.com:scholarslab/NeatlineTime.git'},
+        ],
       },
       :vim => {
         :extra_packages => %w{vim-scripts exuberant-ctags ack-grep htop}
