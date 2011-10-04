@@ -9,7 +9,7 @@ Vagrant::Config.run do |config|
       'cookbooks/slab',
     ]
 
-    # chef.add_recipe 'TODO'
+    chef.add_recipe 'omeka'
 
     chef.add_recipe 'tmux'
     chef.add_recipe 'vim'
