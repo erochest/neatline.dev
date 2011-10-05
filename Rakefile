@@ -29,7 +29,7 @@ task :init => [:clobber,
 
 desc 'Cleans everything out of the environment.'
 task :clobber do
-  FileUtils.rmtree %w{cookbooks}, :verbose => true
+  FileUtils.rmtree %w{omeka omeka.bk cookbooks}, :verbose => true
   env = Vagrant::Environment.new
   if env.primary_vm.created?
     puts 'vagrant destroy'

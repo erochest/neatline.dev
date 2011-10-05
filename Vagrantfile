@@ -9,28 +9,34 @@ Vagrant::Config.run do |config|
       'cookbooks/slab',
     ]
 
+    chef.add_recipe 'apt'
     chef.add_recipe 'omeka'
+    chef.add_recipe 'geoserver'
+    chef.add_recipe 'postgis'
+    chef.add_recipe 'geonetwork'
 
     chef.add_recipe 'tmux'
     chef.add_recipe 'vim'
 
     chef.json.merge!({
       :omeka => {
+        :site_title          => 'Neatline Playground',
+        :description         => 'This is a small Omeka site to play with Neatline.',
         :username            => 'neatline',
         :password            => 'neatline',
         :super_email         => 'erochest@virginia.edu',
         :administrator_email => 'erochest@virginia.edu',
-        :site_title          => 'Neatline Playground',
-        :description         => 'This is a small Omeka site to play with Neatline.',
         :copyright           => 'Rector and Visitors of the University of Virginia',
         :author              => 'Eric Rochester',
         :path_to_convert     => '/usr/bin',
         :version             => 'stable-1.4',
         :plugins             => [
-          {:name => 'Neatline',     :url => 'git@github.com:scholarslab/Neatline.git'},
-          {:name => 'NeatlineMaps', :url => 'git@github.com:scholarslab/NeatlineMaps.git'},
-          {:name => 'NeatlineTime', :url => 'git@github.com:scholarslab/NeatlineTime.git'},
+          {:name => 'Neatline',     :url => 'git://github.com/scholarslab/Neatline.git'},
+          {:name => 'NeatlineMaps', :url => 'git://github.com/scholarslab/NeatlineMaps.git'},
+          {:name => 'NeatlineTime', :url => 'git://github.com/scholarslab/NeatlineTime.git',
+                                    :revision => 'rename'},
         ],
+        :phptools            => false,
       },
       :vim => {
         :extra_packages => %w{vim-scripts exuberant-ctags ack-grep htop}
