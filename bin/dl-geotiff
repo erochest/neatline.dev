@@ -1,0 +1,4 @@
+#!/bin/sh
+
+curl -L -o hotchkiss.tiff 'http://lat.lib.virginia.edu:8080/geoserver/wms?bbox=-77.74712489999999,38.217473,-77.39792489999999,38.409281&styles=&Format=image/geotiff&request=GetMap&version=1.1.1&layers=Hotchkiss:hotchkissmap1rt2&width=2400&height=1236&srs=EPSG:4269'
+
