@@ -22,7 +22,7 @@ def vm_ssh(env, cmd)
   end
 end
 
-desc 'Initializes the environment.'
+desc 'Destroys and initializes the environment.'
 task :init => [:clobber,
                :cookbooks,
                'vm:up']
