@@ -34,7 +34,7 @@ Vagrant::Config.run do |config|
           {:name => 'NeatlineMaps', :url => 'git://github.com/scholarslab/NeatlineMaps.git'},
           {:name => 'NeatlineTime', :url => 'git://github.com/scholarslab/NeatlineTime.git'},
           {:name => 'NeatlineFeatures',
-                                    :url => 'https://erochest@github.com/scholarslab/NeatlineFeatures.git'},
+                                    :url => 'git://github.com/scholarslab/NeatlineFeatures.git'},
         ],
         # :phptools            => false,
       },
