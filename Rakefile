@@ -1,4 +1,10 @@
 
+# Things this doesn't do:
+# * add neatline.dev to /etc/hosts;
+# * set debugging output in .htaccess and application/config/config.ini;
+# * turning on the proper plugins;
+# * removing obsolete plugins.
+
 require 'etc'
 require 'fileutils'
 require 'vagrant'
