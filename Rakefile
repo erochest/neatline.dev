@@ -4,6 +4,12 @@ require 'fileutils'
 require 'vagrant'
 
 
+NEATLINE = %w{Neatline
+              NeatlineMaps
+              NeatlineTime
+              NeatlineFeatures}
+
+
 task :default => :usage
 
 task :usage do
@@ -25,7 +31,8 @@ end
 desc 'Destroys and initializes the environment.'
 task :init => [:clobber,
                :cookbooks,
-               'vm:up']
+               'vm:up',
+               'git:reown']
 
 desc 'Cleans everything out of the environment.'
 task :clobber do
@@ -42,6 +49,21 @@ task :cookbooks do
   Dir.mkdir("cookbooks") unless File.directory?("cookbooks")
   system('git clone --branch=slab https://github.com/erochest/opscode-cookbooks.git cookbooks/opscode')
   system('git clone https://github.com/scholarslab/cookbooks.git cookbooks/slab')
+end
+
+namespace :git do
+  desc 'This moves all the Neatline plugin repositories to point to URLs I have write perms on.'
+  task :reown do
+    NEATLINE.each do |repo_name|
+      if File.exists? "omeka/plugins/#{repo_name}"
+        url = "git@github.com:scholarslab/#{repo_name}.git"
+        puts "#{repo_name} => #{url}"
+        sh %{cd omeka/plugins/#{repo_name} && git remote set-url origin #{url}}
+      else
+        puts "ERROR: missing repository: #{repo_name}"
+      end
+    end
+  end
 end
 
 namespace :vm do
