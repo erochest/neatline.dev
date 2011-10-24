@@ -3,6 +3,7 @@
 # * add neatline.dev to /etc/hosts;
 # * set debugging output in .htaccess and application/config/config.ini;
 # * turning on the proper plugins;
+# * re-install maps so that the db tables are created;
 # * removing obsolete plugins.
 
 require 'etc'
