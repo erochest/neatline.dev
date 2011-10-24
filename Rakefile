@@ -32,7 +32,9 @@ desc 'Destroys and initializes the environment.'
 task :init => [:clobber,
                :cookbooks,
                'vm:up',
-               'git:reown']
+               'git:reown',
+               'neatline:archive',
+               'neatline:mysql']
 
 desc 'Cleans everything out of the environment.'
 task :clobber do
@@ -63,6 +65,22 @@ namespace :git do
         puts "ERROR: missing repository: #{repo_name}"
       end
     end
+  end
+end
+
+namespace :neatline do
+  desc 'This expands the archive directory with the Neatline test data.'
+  task :archive do
+    puts 'Expanding archive files from data/omeka-archive.tar.gz.'
+    env = Vagrant::Environment.new
+    vm_ssh(env, 'cd /vagrant/omeka ; tar xfz ../data/omeka-archive.tar.gz')
+  end
+
+  desc 'This loads the Omeka database with the Neatline test data.'
+  task :mysql do
+    puts 'Loading database data from data/omeka-neatline.dump.sql.'
+    env = Vagrant::Environment.new
+    vm_ssh(env, 'cd /vagrant/data ; mysql -uomeka -pomeka omeka < omeka-neatline.dump.sql')
   end
 end
 
