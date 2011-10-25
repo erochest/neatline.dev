@@ -4,7 +4,8 @@
 # * set debugging output in .htaccess and application/config/config.ini;
 # * turning on the proper plugins;
 # * re-install maps so that the db tables are created;
-# * removing obsolete plugins.
+# * removing obsolete plugins;
+# * bump up POST size and upload size limits (upload_max_filesize and post_max_size).
 
 require 'etc'
 require 'fileutils'
