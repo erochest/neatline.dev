@@ -1,0 +1,5 @@
+CREATE DATABASE IF NOT EXISTS <%= @dbname %> CHARACTER SET='utf8' COLLATE='utf8_unicode_ci';
+CREATE USER '<%= @dbuser %>'@'localhost' IDENTIFIED BY '<%= @dbpass %>';
+CREATE USER '<%= @dbuser %>'@'%' IDENTIFIED BY '<%= @dbpass %>';
+GRANT ALL PRIVILEGES ON <%= @dbname %>.* TO '<%= @dbuser %>'@'localhost';
+GRANT ALL PRIVILEGES ON <%= @dbname %>.* TO '<%= @dbuser %>'@'*';

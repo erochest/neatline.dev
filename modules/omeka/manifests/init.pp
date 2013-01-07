@@ -36,8 +36,12 @@
 # Copyright 2013 Your name here, unless otherwise noted.
 #
 class omeka(
-  $branch  = 'master',
-  $rootdir = '/usr/local/projects'
+  $branch   = 'master',
+  $rootdir  = '/usr/local/projects',
+  $dbuser   = 'omeka',
+  $dbpass   = 'omeka',
+  $dbname   = 'omeka',
+  $dbprefix = 'omeka_'
 ) {
 
   class { 'omeka::install' : } ->
