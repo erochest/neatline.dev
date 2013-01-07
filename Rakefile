@@ -1,4 +1,6 @@
 
+require 'fileutils'
+
 NL_REPOS = {
   'NeatlineTime' => 'git@github.com:scholarslab/NeatlineTime.git',
 }
@@ -18,5 +20,10 @@ namespace :git do
       sh %{cd Omeka/plugins/#{k} && git remote set-url origin #{v} && git flow init -d}
     end
   end
+end
+
+desc 'This clears out the Omeka installation.'
+task :clean do
+  FileUtils.rmtree 'Omeka', :verbose => true
 end
 
