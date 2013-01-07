@@ -1,0 +1,4 @@
+
+class omeka::config {
+}
+

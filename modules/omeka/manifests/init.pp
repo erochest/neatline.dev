@@ -29,13 +29,21 @@
 #
 # === Authors
 #
-# Author Name <author@domain.com>
+# Eric Rochester <erochest@virginia.edu>
 #
 # === Copyright
 #
 # Copyright 2013 Your name here, unless otherwise noted.
 #
-class omeka {
+class omeka(
+  $branch  = 'master',
+  $rootdir = '/usr/local/projects'
+) {
 
+  class { 'omeka::install' : } ->
+  class { 'omeka::code'    : } ->
+  class { 'omeka::config'  : } ->
+  class { 'omeka::service' : } ->
+  Class['omeka']
 
 }
