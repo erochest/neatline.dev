@@ -41,7 +41,8 @@ class omeka(
   $dbuser   = 'omeka',
   $dbpass   = 'omeka',
   $dbname   = 'omeka',
-  $dbprefix = 'omeka_'
+  $dbprefix = 'omeka_',
+  $debug    = false
 ) {
 
   class { 'omeka::install' : } ->

@@ -9,6 +9,10 @@ class omeka::install {
     ensure => installed,
   }
 
+  package { 'php5-fpm':
+    ensure => installed,
+  }
+
   package { 'imagemagick':
     ensure => installed,
   }
