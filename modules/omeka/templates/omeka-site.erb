@@ -1,38 +1,31 @@
+<VirtualHost *:80>
+        ServerAdmin admin@localhost
 
-server {
-  listen 80;
-  root <%= @rootdir %>/Omeka;
-  index index.html index.htm index.php;
-  server_name localhost;
-  # rewrite_log on;
+        DocumentRoot <%= @rootdir %>/Omeka
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride All
+        </Directory>
+        <Directory <%= @rootdir %>/Omeka/>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
 
-  location / {
-    try_files $uri $uri/ @rewrites;
-    ## For omeka/master.
-    # try_files $uri @rewrites;
-  }
+        ScriptAlias /cgi-bin/ <%= @rootdir %>/Omeka/cgi-bin/
+        <Directory "<%= @rootdir %>/Omeka/cgi-bin">
+                AllowOverride None
+                Options ExecCGI -MultiViews +SymLinksIfOwnerMatch
+                Order allow,deny
+                Allow from all
+        </Directory>
 
-  ## These work for omeka/master (as for 8 Jan 2013).
-  # location @rewrites {
-  #   rewrite ^/install/.*$ /install/install.php last;
-  #   rewrite ^/admin/.*$ /admin/index.php last;
-  #   rewrite ^ /index.php last;
-  # }
+        ErrorLog ${APACHE_LOG_DIR}/error.log
 
-  location @rewrites {
-    rewrite ^/admin/ /admin/index.php last;
-    rewrite ^/install/ /admin/index.php last;
-    rewrite .* index.php last;
-  }
+        # Possible values include: debug, info, notice, warn, error, crit,
+        # alert, emerg.
+        LogLevel warn
 
-  location ~ \.ini {
-    return 403;
-  }
-
-  location ~ \.php {
-    include fastcgi_params;
-    fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
-    fastcgi_pass unix:/var/run/php5-fpm.sock;
-  }
-}
-
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>

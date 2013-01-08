@@ -36,7 +36,7 @@
 # Copyright 2013 Your name here, unless otherwise noted.
 #
 class omeka(
-  $branch   = 'v1.5.3',
+  $branch   = 'stable-1.5',
   $rootdir  = '/usr/local/projects',
   $dbuser   = 'omeka',
   $dbpass   = 'omeka',
