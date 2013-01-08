@@ -4,16 +4,16 @@ server {
   root <%= @rootdir %>/Omeka;
   index index.html index.htm index.php;
   server_name localhost;
+  rewrite_log on;
 
   location / {
-    try_files $uri $uri/ @rewrites;
+    try_files $uri @rewrites;
   }
 
   location @rewrites {
+    rewrite ^/install/.*$ /install/install.php last;
+    rewrite ^/admin/.*$ /admin/index.php last;
     rewrite ^ /index.php last;
-    rewrite ^install/.*$ install/install.php last;
-    rewrite ^admin/.*$ admin/index.php last;
-    rewrite .* index.php;
   }
 
   location ~ \.ini {

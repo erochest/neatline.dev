@@ -13,6 +13,10 @@ class omeka::install {
     ensure => installed,
   }
 
+  package { 'php5-mysql':
+    ensure => installed,
+  }
+
   package { 'imagemagick':
     ensure => installed,
   }
