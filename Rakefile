@@ -23,6 +23,11 @@ namespace :git do
 end
 
 namespace :omeka do
+  desc "This changes the permissions on the archive directory. This doesn't stick when set from inside the VM."
+  task :archive do
+    sh %{chmod -R a+rwx Omeka/archive}
+  end
+
   desc "This changes the permissions on the files directory. This doesn't stick when set from inside the VM."
   task :files do
     sh %{chmod -R a+rwx Omeka/files}
@@ -32,5 +37,10 @@ end
 desc 'This clears out the Omeka installation.'
 task :clean do
   FileUtils.rmtree 'Omeka', :verbose => true
+end
+
+desc 'This razes it to the ground. Useful for starting over.'
+task :raze => :clean do
+  sh %{vagrant destroy --force}
 end
 

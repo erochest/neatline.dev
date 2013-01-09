@@ -1,7 +1,8 @@
 
 class omeka::config {
-  $rootdir = $omeka::rootdir
-  $debug   = $omeka::debug
+  $hostname = $omeka::hostname
+  $rootdir  = $omeka::rootdir
+  $debug    = $omeka::debug
 
   class { 'omeka::config::php'    : } ->
   class { 'omeka::config::mysql'  : } ->
@@ -26,13 +27,19 @@ class omeka::config {
     source => "$rootdir/Omeka/.htaccess.changeme",
   }
 
-  file { 'files' :
-    path    => "$rootdir/Omeka/files",
+  file { 'archive' :
+    path    => "$rootdir/Omeka/archive",
     ensure  => directory,
     recurse => true,
     mode    => 0777,
     owner   => 'www-data',
     group   => 'www-data',
+  }
+
+  if $hostname != 'localhost' {
+    host { $hostname :
+      ip => '127.0.0.1',
+    }
   }
 
 }
