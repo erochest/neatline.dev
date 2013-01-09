@@ -1,0 +1,3 @@
+[submodule "modules/omeka"]
+	path = modules/omeka
+	url = git://github.com/erochest/puppet-omeka.git
