@@ -19,9 +19,9 @@ END $$
 DELIMITER ;
 
 CREATE DATABASE IF NOT EXISTS <%= @dbname %> CHARACTER SET='utf8' COLLATE='utf8_unicode_ci';
-CALL createUser('<%= dbuser %>', 'localhost', '<%= @dbpass %>');
-CALL createUser('<%= dbuser %>', '*', '<%= @dbpass %>');
+CALL createUser('<%= @dbuser %>', 'localhost', '<%= @dbpass %>');
+CALL createUser('<%= @dbuser %>', '%', '<%= @dbpass %>');
 GRANT ALL PRIVILEGES ON <%= @dbname %>.* TO '<%= @dbuser %>'@'localhost';
-GRANT ALL PRIVILEGES ON <%= @dbname %>.* TO '<%= @dbuser %>'@'*';
+GRANT ALL PRIVILEGES ON <%= @dbname %>.* TO '<%= @dbuser %>'@'%';
 
 DROP DATABASE `PuPpEt_OmEkA`;
