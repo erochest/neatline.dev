@@ -13,12 +13,24 @@ task :usage do
   puts "and give me something specific to do."
 end
 
+desc 'This updates the submodule, spins up the VM, and sets the perms.'
+task :create => 'git:submodule' do
+  sh %{vagrant up}
+  Rake::Task['omeka:archive'].invoke
+end
+
 namespace :git do
   desc 'This changes the ownership of the plugin repositories and sets up git flow.'
   task :reown do
     NL_REPOS.each do |k, v|
       sh %{cd Omeka/plugins/#{k} && git remote set-url origin #{v} && git flow init -d}
     end
+  end
+
+  desc 'This initializes and updates the submodules.'
+  task :submodule do
+    sh %{git submodule init}
+    sh %{git submodule update}
   end
 end
 
