@@ -36,6 +36,7 @@
 # Copyright 2013 Your name here, unless otherwise noted.
 #
 class omeka(
+  $hostname = 'localhost',
   $branch   = 'stable-1.5',
   $rootdir  = '/usr/local/projects',
   $dbuser   = 'omeka',

@@ -4,9 +4,10 @@ exec { 'apt-get update':
 }
 
 class { 'omeka':
-  rootdir => '/vagrant',
-  require => Exec['apt-get update'],
-  debug   => true,
+  hostname => 'neatline.dev',
+  rootdir  => '/vagrant',
+  require  => Exec['apt-get update'],
+  debug    => true,
 }
 
 omeka::gitplugin { 'NeatlineTime':
