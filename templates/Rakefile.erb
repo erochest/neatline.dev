@@ -56,3 +56,8 @@ task :raze => :clean do
   sh %{vagrant destroy --force}
 end
 
+desc 'This opens the site in your browser.'
+task :launch do
+  sh %{open http://omeka2.dev}
+end
+
