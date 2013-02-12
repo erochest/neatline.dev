@@ -1,7 +1,7 @@
 
 require 'fileutils'
 
-NL_REPOS = {
+PLUGINS = {
   '<%= plugin_title %>' => 'git@github.com:<%= plugin_owner %>/<%= plugin_reponame %>.git',
 }
 
@@ -22,8 +22,8 @@ end
 namespace :git do
   desc 'This changes the ownership of the plugin repositories and sets up git flow.'
   task :reown do
-    NL_REPOS.each do |k, v|
-      sh %{cd Omeka/plugins/#{k} && git remote set-url origin #{v} && git flow init -d}
+    PLUGINS.each do |k, v|
+      sh %{cd Omeka/plugins/#{k} && git remote set-url origin #{v} && git checkout develop && git flow init -d}
     end
   end
 
