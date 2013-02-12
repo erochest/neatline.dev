@@ -71,11 +71,11 @@ Once the VM has been created, you can give a pretty standard workflow.
 
 1. When you sit down to work on the project, issue this:
 
-   > vagrant up --no-provision
+       > vagrant up --no-provision
 
 2. When you're done for the day, do this:
 
-   > vagrant suspend
+       > vagrant suspend
 
 Because of the way that Vagrant handles network interfaces, you can really only
 have one VM up at a time. *Be sure to suspend your VM before you try to start
