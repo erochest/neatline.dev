@@ -1,0 +1,62 @@
+#!/usr/bin/env ruby
+
+require 'erb'
+require 'highline/import'
+
+
+TEMPLATES = [['templates/Rakefile.erb',      'Rakefile'],
+             ['templates/Vagrantfile.erb',   'Vagrantfile'],
+             ['templates/base.pp.erb',       'manifests/base.pp'],
+             ['templates/local-host.pp.erb', 'manifests/local-host.pp']]
+
+
+## Populate the binding class with them.
+class TemplateData
+  attr_accessor :vm_host, :vm_ip, :plugin_owner, :plugin_reponame, :plugin_title
+
+  def initialize
+    @vm_host         = nil
+    @vm_ip           = nil
+    @plugin_owner    = nil
+    @plugin_reponame = nil
+    @plugin_title    = nil
+  end
+
+  def prompt!
+    @vm_host = ask("VM hostname")
+    @vm_ip   = ask("VM IP")
+    plugin   = ask('Github Plugin (OWNER/NAME)') { |q| q.validate = /^\w+\/\w+$/ }
+
+    @plugin_owner, @plugin_reponame = plugin.split '/'
+    plugin_title  = @plugin_reponame.gsub /^plugin_/, ''
+    @plugin_title = ask("Plugin title") { |q| q.default  = plugin_title }
+  end
+
+  def get_binding
+    binding
+  end
+
+  def render(template)
+    erb = ERB.new template
+    erb.result(get_binding)
+  end
+
+  def save(template, filename)
+    data = render(template)
+    File.open(filename, 'w+') do |f|
+      f.write(data)
+    end
+  end
+end
+
+## For each template, read, render, and save it.
+td = TemplateData.new
+td.prompt!
+
+TEMPLATES.each do |tmpl, dest|
+  puts "Creating #{dest}..."
+  td.save(IO.read(tmpl), dest)
+end
+
+puts "done"
+

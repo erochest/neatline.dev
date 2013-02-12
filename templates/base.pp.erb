@@ -4,14 +4,14 @@ exec { 'apt-get update':
 }
 
 class { 'omeka':
-  hostname => 'neatline.dev',
+  hostname => '<%= vm_host %>',
   rootdir  => '/vagrant',
   require  => Exec['apt-get update'],
   debug    => true,
 }
 
-omeka::gitplugin { 'NeatlineTime':
-  url     => 'git://github.com/scholarslab/NeatlineTime.git',
+omeka::gitplugin { '<%= plugin_title %>':
+  url     => 'git://github.com/<%= plugin_owner %>/<%= plugin_reponame %>.git',
   require => Class['Omeka'],
 }
 
