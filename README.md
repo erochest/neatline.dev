@@ -34,39 +34,34 @@ change.
 ### Customizing
 
 Just call the `bootstrap` script. This will prompt you for any parameters and
-create some files. When it's done, you can run `rake create`.
+create some files.
 
-#### `Rakefile`
+    > bootstrap
+    VM hostname
+    omeka2.dev
+    VM IP
+    33.33.33.8
+    Github Plugin (OWNER/NAME)
+    scholarslab/NeatlineFeatures
+    Plugin title  |NeatlineFeatures|
 
-The `NL_REPOS` value at the top contains a hash of Omeka plugins to download.
-Because they're cloned from inside the VM, they don't have access to your
-github keys, and so they're cloned using the public, read-only URL. This hash
-should point to the private, read-write URLs. The `git:reown` Rake task will
-update the remote URLs for origin based on this hash.
-
-#### `Vagrantfile`
-
-You'll probably want to change the value for `config.vm.network`.
-
-#### `manifests/base.pp`
-
-You'll want to change the value of the `hostname` parameter for the `omeka`
-class.
-
-Also, you'll want to change the list of plugins that you install. See the
-example for [NeatlineTime][nltime] in the file.
+    Creating Rakefile...
+    Creating Vagrantfile...
+    Creating manifests/base.pp...
+    Creating manifests/local-host.pp...
+    done
 
 ### Building the VM
 
 Once the files are to your liking, just do this.
 
-> rake create
+    > rake create
 
 ### Cleaning up
 
 If you want to destroy the VM and remove the Omeka directory, just execute this command.
 
-> rake raze
+    > rake raze
 
 **WARNING**: You *will* lose data!
 
