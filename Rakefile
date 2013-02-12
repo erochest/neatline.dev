@@ -16,7 +16,7 @@ end
 desc 'This updates the submodule, spins up the VM, and sets the perms.'
 task :create => 'git:submodule' do
   sh %{vagrant up}
-  Rake::Task['omeka:archive'].invoke
+  Rake::Task['omeka:files'].invoke
 end
 
 namespace :git do
