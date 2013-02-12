@@ -33,6 +33,9 @@ change.
 
 ### Customizing
 
+Just call the `bootstrap` script. This will prompt you for any parameters and
+create some files. When it's done, you can run `rake create`.
+
 #### `Rakefile`
 
 The `NL_REPOS` value at the top contains a hash of Omeka plugins to download.
