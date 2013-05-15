@@ -28,8 +28,10 @@ class TemplateData
     plugin   = ask('Github Plugin (OWNER/NAME)') { |q| q.validate = /^\w+\/\w+$/ }
 
     @plugin_owner, @plugin_reponame = plugin.split '/'
-    plugin_title  = @plugin_reponame.gsub /^plugin_/, ''
+    plugin_title  = @plugin_reponame.gsub(/^plugin_/, '')
     @plugin_title = ask("Plugin title") { |q| q.default  = plugin_title }
+
+    Dir.mkdir('manifests') unless File.directory?('manifests')
   end
 
   def get_binding
