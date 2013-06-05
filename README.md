@@ -166,6 +166,10 @@ Once the files are to your liking, just do this.
 
     > rake create
 
+If you get errors while running this, try re-provisioning the VM:
+
+    > vagrant provision
+
 ### Cleaning up
 
 If you want to destroy the VM and remove the Omeka directory, just execute this command.
