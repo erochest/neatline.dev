@@ -7,6 +7,12 @@ PLUGINS = {
 {{/plugins}}
 }
 
+THEMES = {
+{{#themes}}
+  '{{name}}' => '{{git}}',
+{{/themes}}
+}
+
 task :default => :usage
 
 task :usage do
@@ -26,6 +32,9 @@ namespace :git do
   task :reown do
     PLUGINS.each do |k, v|
       sh %{cd Omeka/plugins/#{k} && git remote set-url origin #{v} && git checkout develop && git flow init -d}
+    end
+    THEMES.each do |k, v|
+      sh %{cd Omeka/themes/#{k} && git remove set-url origin #{v} && git checkout develop && git flow init -d}
     end
   end
 

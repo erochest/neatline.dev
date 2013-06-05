@@ -54,6 +54,18 @@ PROMPTS = [
             metavar='PLUGIN',
             dest='plugins',
             )),
+        ('-t', '--theme', 'Theme Spec', dict(
+            action='append',
+            help='The git repo to pull the theme from. If you need to name '
+                 'the theme something special, use a pipe character to '
+                 'specify the path (e.g., '
+                 '"git://host/path/myTheme_Something|Something"). bootstrap '
+                 'recognizes both "theme_Something" and "Something as valid '
+                 'names (and strips the "theme_" off accordingly). This '
+                 'option can be given multiple times.',
+            metavar='THEME',
+            dest='themes',
+            )),
         ]
 
 RE_PLUGIN_NAME = re.compile(r'/(plugin_)?(?P<name>[^/]+?)(.git)?$')
@@ -144,7 +156,8 @@ def parse_plugin(plugin_spec, delim='|', regex=RE_PLUGIN_NAME):
 def do_templates(opts, templates=TEMPLATES):
     """This takes the command-line options and handles all templates. """
     params = vars(opts)
-    params['plugins'] = [ parse_plugin(p) for p in params['plugins'] ]
+    params['plugins'] = [ parse_plugin(p) for p in (params['plugins'] or []) ]
+    params['themes']  = [ parse_plugin(t) for t in (params['themes']  or []) ]
 
     for (src, dest) in templates:
         destdir = os.path.dirname(dest)

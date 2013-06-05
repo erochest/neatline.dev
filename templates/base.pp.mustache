@@ -17,3 +17,10 @@ omeka::gitplugin { '{{name}}':
 }
 {{/plugins}}
 
+{{#themes}}
+omeka::gittheme { '{{name}}' :
+  url     => '{{git}}',
+  require => Class['Omeka'],
+}
+{{/themes}}
+
