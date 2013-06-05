@@ -3,24 +3,28 @@ exec { 'apt-get update':
   path => ['/usr/bin'],
 }
 
+package { 'git' :
+  ensure => installed,
+}
+
 class { 'omeka':
   hostname => '{{vm_host}}',
   rootdir  => '/vagrant',
-  require  => Exec['apt-get update'],
+  require  => [Exec['apt-get update'], Package['git']],
   debug    => true,
 }
 
 {{#plugins}}
 omeka::gitplugin { '{{name}}':
   url     => '{{git}}',
-  require => Class['Omeka'],
+  require => [Class['Omeka'], Package['git']],
 }
 {{/plugins}}
 
 {{#themes}}
 omeka::gittheme { '{{name}}' :
   url     => '{{git}}',
-  require => Class['Omeka'],
+  require => [Class['Omeka'], Package['git']],
 }
 {{/themes}}
 
