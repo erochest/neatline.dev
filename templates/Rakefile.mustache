@@ -2,7 +2,9 @@
 require 'fileutils'
 
 PLUGINS = {
-  '<%= plugin_title %>' => 'git@github.com:<%= plugin_owner %>/<%= plugin_reponame %>.git',
+{{#plugins}}
+  '{{name}}' => '{{git}}',
+{{/plugins}}
 }
 
 task :default => :usage
@@ -58,6 +60,6 @@ end
 
 desc 'This opens the site in your browser.'
 task :launch do
-  sh %{open http://omeka2.dev}
+  sh %{open http://{{vm_host}}}
 end
 

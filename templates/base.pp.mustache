@@ -4,14 +4,16 @@ exec { 'apt-get update':
 }
 
 class { 'omeka':
-  hostname => '<%= vm_host %>',
+  hostname => '{{vm_host}}',
   rootdir  => '/vagrant',
   require  => Exec['apt-get update'],
   debug    => true,
 }
 
-omeka::gitplugin { '<%= plugin_title %>':
-  url     => 'git://github.com/<%= plugin_owner %>/<%= plugin_reponame %>.git',
+{{#plugins}}
+omeka::gitplugin { '{{name}}':
+  url     => '{{git}}',
   require => Class['Omeka'],
 }
+{{/plugins}}
 

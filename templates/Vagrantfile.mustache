@@ -4,7 +4,7 @@
 Vagrant::Config.run do |config|
   config.vm.box = "ubuntu-12.10-64"
   config.vm.box_url = "http://people.virginia.edu/~err8n/ubuntu-12.10-64.box"
-  config.vm.network :hostonly, "<%= vm_ip %>"
+  config.vm.network :hostonly, "{{vm_ip}}"
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
   # are contained in a directory path relative to this Vagrantfile.

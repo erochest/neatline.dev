@@ -1,64 +1,197 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env python
 
-require 'erb'
-require 'highline/import'
-
-
-TEMPLATES = [['templates/Rakefile.erb',      'Rakefile'],
-             ['templates/Vagrantfile.erb',   'Vagrantfile'],
-             ['templates/base.pp.erb',       'manifests/base.pp'],
-             ['templates/local-host.pp.erb', 'manifests/local-host.pp']]
+"""\
+Sets up the directory with the configuration to create a Vagrant VM running
+Omeka.
+"""
 
 
-## Populate the binding class with them.
-class TemplateData
-  attr_accessor :vm_host, :vm_ip, :plugin_owner, :plugin_reponame, :plugin_title
+import argparse
+import os
+import re
+import sys
 
-  def initialize
-    @vm_host         = nil
-    @vm_ip           = nil
-    @plugin_owner    = nil
-    @plugin_reponame = nil
-    @plugin_title    = nil
-  end
+from clint.textui import cols, indent, max_width, puts
+import pystache
 
-  def prompt!
-    @vm_host = ask("VM hostname")
-    @vm_ip   = ask("VM IP")
-    plugin   = ask('Github Plugin (OWNER/NAME)') { |q| q.validate = /^\w+\/\w+$/ }
 
-    @plugin_owner, @plugin_reponame = plugin.split '/'
-    plugin_title  = @plugin_reponame.gsub(/^plugin_/, '')
-    @plugin_title = ask("Plugin title") { |q| q.default  = plugin_title }
+EPILOG = """\
+If no options are given, the script is run interactively. If a command-line
+parameter is given, that will be skipped in the interactive prompts. If all
+command-line parameters are supplied, the script will not be run interactively.
+"""
 
-    Dir.mkdir('manifests') unless File.directory?('manifests')
-  end
+TEMPLATES = [
+        ('templates/Rakefile.mustache',      './Rakefile'),
+        ('templates/Vagrantfile.mustache',   './Vagrantfile'),
+        ('templates/base.pp.mustache',       './manifests/base.pp'),
+        ('templates/local-host.pp.mustache', './manifests/local-host.pp'),
+        ]
 
-  def get_binding
-    binding
-  end
+PROMPTS = [
+        ('-H', '--host', 'VM Host', dict(
+            action='store',
+            help='The name to use when connecting to the VM from the host.',
+            metavar='VM-HOST',
+            dest='vm_host',
+            )),
+        ('-I', '--ip', 'VM IP Address', dict(
+            action='store',
+            help='The IP address to use when connecting to the VM from the '
+                 'host.',
+            metavar='VM-IP',
+            dest='vm_ip',
+            )),
+        ('-p', '--plugin', 'Plugin Spec', dict(
+            action='append',
+            help='The git repo to pull the plugin from. If you need to name '
+                 'the plugin something special, use a pipe character to '
+                 'specify the path (e.g., '
+                 '"git://host/path/myPlugin_Something|Something"). bootstrap '
+                 'recognizes both "plugin_Something" and "Something" as valid '
+                 'names (and strips the "plugin_" off accordingly). This '
+                 'option can be given multiple times.',
+            metavar='PLUGIN',
+            dest='plugins',
+            )),
+        ]
 
-  def render(template)
-    erb = ERB.new template
-    erb.result(get_binding)
-  end
+RE_PLUGIN_NAME = re.compile(r'/(plugin_)?(?P<name>[^/]+?)(.git)?$')
 
-  def save(template, filename)
-    data = render(template)
-    File.open(filename, 'w+') do |f|
-      f.write(data)
-    end
-  end
-end
 
-## For each template, read, render, and save it.
-td = TemplateData.new
-td.prompt!
+def do_prompt(prompt, prompt_info, default=None, width=80):
+    """\
+    Takes a dict of the same info argparser wants and prompts the user.
 
-TEMPLATES.each do |tmpl, dest|
-  puts "Creating #{dest}..."
-  td.save(IO.read(tmpl), dest)
-end
+    This is completely incomplete. I just cover the arguments I need for this
+    script.
 
-puts "done"
+    """
+
+    prompt_default = default or prompt_info.get('default')
+    if prompt_default:
+        prompt += ' (default = "' + prompt_default + '")'
+    prompt += ': '
+    value = default
+
+    while True:
+        reply = raw_input(prompt)
+
+        if reply == '?':
+            with indent(4):
+                puts(max_width(prompt_info['help'], width))
+
+        elif reply == '':
+            break
+
+        elif prompt_info['action'] == 'append':
+            value = [] if value is None else value
+            value.append(reply)
+
+        else:
+            value = reply
+            break
+
+    return value
+
+
+def fill_in(prompts, opts):
+    """Walks over prompts and fills in the missing information in opts. """
+    width = cols.console_width({})
+    puts(max_width("Enter a value for each item or leave blank to skip or "
+                   "move on to the next item. '?' displays help for that "
+                   "item.", width))
+    if not opts.batch:
+        for (_, _, prompt, prompt_info) in prompts:
+            optname = prompt_info['dest']
+            value = getattr(opts, optname, None)
+            if value is None or opts.interactive:
+                value = do_prompt(prompt, prompt_info, value, width=width)
+                setattr(opts, optname, value)
+
+    return opts
+
+
+def parse_plugin(plugin_spec, delim='|', regex=RE_PLUGIN_NAME):
+    """\
+    This returns a tuple of the plugin address and its name.
+
+    To explicitly specify a name, append it to the spec with a pipe:
+
+        >>> parse_plugin('git://host/path/PluginName|Plugin') == {
+        ...     'git': 'git://host/path/PluginName', 'name': 'Plugin'}
+        True
+        >>> parse_plugin('git://host/path/plugin_Name') == {
+        ...     'git': 'git://host/path/plugin_Name', 'name': 'Name'}
+        True
+        >>> parse_plugin('git://host/path/Name.git') == {
+        ...     'git': 'git://host/path/Name.git', 'name': 'Name'}
+        True
+        >>> parse_plugin('git://host/path/Name') == {
+        ...     'git': 'git://host/path/Name', 'name': 'Name'}
+        True
+
+    """
+
+    split = plugin_spec.split(delim)
+    if len(split) == 2:
+        return {'git': split[0], 'name': split[1]}
+
+    m = regex.search(plugin_spec)
+    return {'git': plugin_spec, 'name': m.group('name')}
+
+
+def do_templates(opts, templates=TEMPLATES):
+    """This takes the command-line options and handles all templates. """
+    params = vars(opts)
+    params['plugins'] = [ parse_plugin(p) for p in params['plugins'] ]
+
+    for (src, dest) in templates:
+        destdir = os.path.dirname(dest)
+        if not os.path.exists(destdir):
+            os.makedirs(destdir)
+
+        with open(src) as fin, open(dest, 'w') as fout:
+            print('Creating {0}...'.format(dest))
+            fout.write(pystache.render(fin.read(), params))
+
+
+def parse_args(args, prompts, descr=__doc__):
+    parser = argparse.ArgumentParser(
+            description=descr,
+            epilog=EPILOG,
+            )
+
+    parser.add_argument(
+            '-i', '--interactive',
+            action='store_true',
+            help='Force all interactive prompts. Command-line options will '
+                 'be used for defaults.',
+            dest='interactive',
+            default=False,
+            )
+    parser.add_argument(
+            '-b', '--batch',
+            action='store_true',
+            help='For NO interactive prompts. The process will be run with '
+                 'whatever information is given on the command line. (This '
+                 'is the opposite of -i, --interactive.',
+            dest='batch',
+            )
+
+    for (n1, n2, _, params) in prompts:
+        parser.add_argument(n1, n2, **params)
+
+    opts = parser.parse_args(args)
+    return opts
+
+
+def main(args=None):
+    opts = parse_args(args or sys.argv[1:], PROMPTS)
+    fill_in(PROMPTS, opts)
+    do_templates(opts)
+
+
+if __name__ == '__main__':
+    main()
 
