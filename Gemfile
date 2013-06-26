@@ -1,7 +1,5 @@
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'vagrant'
 gem 'puppet'
 
-# For bootstrap
-gem 'highline'
