@@ -2,8 +2,8 @@
 # vi: set ft=ruby :
 
 Vagrant::Config.run do |config|
-  config.vm.box = "ubuntu-12.10-64"
-  config.vm.box_url = "http://people.virginia.edu/~err8n/ubuntu-13.04.box"
+  config.vm.box = "ubuntu-13.04-server-amd64"
+  config.vm.box_url = "http://people.virginia.edu/~err8n/ubuntu-13.04-server-amd64.box"
   config.vm.network :hostonly, "{{vm_ip}}"
 
   # Enable provisioning with Puppet stand alone.  Puppet manifests
