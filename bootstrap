@@ -22,51 +22,51 @@ command-line parameters are supplied, the script will not be run interactively.
 """
 
 TEMPLATES = [
-        ('templates/Rakefile.mustache',      './Rakefile'),
-        ('templates/Vagrantfile.mustache',   './Vagrantfile'),
-        ('templates/base.pp.mustache',       './manifests/base.pp'),
-        ('templates/local-host.pp.mustache', './manifests/local-host.pp'),
-        ]
+    ('templates/Rakefile.mustache',      './Rakefile'),
+    ('templates/Vagrantfile.mustache',   './Vagrantfile'),
+    ('templates/base.pp.mustache',       './manifests/base.pp'),
+    ('templates/local-host.pp.mustache', './manifests/local-host.pp'),
+    ]
 
 PROMPTS = [
-        ('-H', '--host', 'VM Host', dict(
-            action='store',
-            help='The name to use when connecting to the VM from the host.',
-            metavar='VM-HOST',
-            dest='vm_host',
-            )),
-        ('-I', '--ip', 'VM IP Address', dict(
-            action='store',
-            help='The IP address to use when connecting to the VM from the '
-                 'host.',
-            metavar='VM-IP',
-            dest='vm_ip',
-            )),
-        ('-p', '--plugin', 'Plugin Spec', dict(
-            action='append',
-            help='The git repo to pull the plugin from. If you need to name '
-                 'the plugin something special, use a pipe character to '
-                 'specify the path (e.g., '
-                 '"git://host/path/myPlugin_Something|Something"). bootstrap '
-                 'recognizes both "plugin_Something" and "Something" as valid '
-                 'names (and strips the "plugin_" off accordingly). This '
-                 'option can be given multiple times.',
-            metavar='PLUGIN',
-            dest='plugins',
-            )),
-        ('-t', '--theme', 'Theme Spec', dict(
-            action='append',
-            help='The git repo to pull the theme from. If you need to name '
-                 'the theme something special, use a pipe character to '
-                 'specify the path (e.g., '
-                 '"git://host/path/myTheme_Something|Something"). bootstrap '
-                 'recognizes both "theme_Something" and "Something as valid '
-                 'names (and strips the "theme_" off accordingly). This '
-                 'option can be given multiple times.',
-            metavar='THEME',
-            dest='themes',
-            )),
-        ]
+    ('-H', '--host', 'VM Host', dict(
+        action='store',
+        help='The name to use when connecting to the VM from the host.',
+        metavar='VM-HOST',
+        dest='vm_host',
+        )),
+    ('-I', '--ip', 'VM IP Address', dict(
+        action='store',
+        help='The IP address to use when connecting to the VM from the '
+             'host.',
+        metavar='VM-IP',
+        dest='vm_ip',
+        )),
+    ('-p', '--plugin', 'Plugin Spec', dict(
+        action='append',
+        help='The git repo to pull the plugin from. If you need to name '
+             'the plugin something special, use a pipe character to '
+             'specify the path (e.g., '
+             '"git://host/path/myPlugin_Something|Something"). bootstrap '
+             'recognizes both "plugin_Something" and "Something" as valid '
+             'names (and strips the "plugin_" off accordingly). This '
+             'option can be given multiple times.',
+        metavar='PLUGIN',
+        dest='plugins',
+        )),
+    ('-t', '--theme', 'Theme Spec', dict(
+        action='append',
+        help='The git repo to pull the theme from. If you need to name '
+             'the theme something special, use a pipe character to '
+             'specify the path (e.g., '
+             '"git://host/path/myTheme_Something|Something"). bootstrap '
+             'recognizes both "theme_Something" and "Something as valid '
+             'names (and strips the "theme_" off accordingly). This '
+             'option can be given multiple times.',
+        metavar='THEME',
+        dest='themes',
+        )),
+    ]
 
 RE_PLUGIN_NAME = re.compile(r'/(plugin_)?(?P<name>[^/]+?)(.git)?$')
 
@@ -156,8 +156,8 @@ def parse_plugin(plugin_spec, delim='|', regex=RE_PLUGIN_NAME):
 def do_templates(opts, templates=TEMPLATES):
     """This takes the command-line options and handles all templates. """
     params = vars(opts)
-    params['plugins'] = [ parse_plugin(p) for p in (params['plugins'] or []) ]
-    params['themes']  = [ parse_plugin(t) for t in (params['themes']  or []) ]
+    params['plugins'] = [parse_plugin(p) for p in (params['plugins'] or [])]
+    params['themes'] = [parse_plugin(t) for t in (params['themes'] or [])]
 
     for (src, dest) in templates:
         destdir = os.path.dirname(dest)
@@ -171,26 +171,26 @@ def do_templates(opts, templates=TEMPLATES):
 
 def parse_args(args, prompts, descr=__doc__):
     parser = argparse.ArgumentParser(
-            description=descr,
-            epilog=EPILOG,
-            )
+        description=descr,
+        epilog=EPILOG,
+        )
 
     parser.add_argument(
-            '-i', '--interactive',
-            action='store_true',
-            help='Force all interactive prompts. Command-line options will '
-                 'be used for defaults.',
-            dest='interactive',
-            default=False,
-            )
+        '-i', '--interactive',
+        action='store_true',
+        help='Force all interactive prompts. Command-line options will '
+             'be used for defaults.',
+        dest='interactive',
+        default=False,
+        )
     parser.add_argument(
-            '-b', '--batch',
-            action='store_true',
-            help='For NO interactive prompts. The process will be run with '
-                 'whatever information is given on the command line. (This '
-                 'is the opposite of -i, --interactive.',
-            dest='batch',
-            )
+        '-b', '--batch',
+        action='store_true',
+        help='For NO interactive prompts. The process will be run with '
+             'whatever information is given on the command line. (This '
+             'is the opposite of -i, --interactive.',
+        dest='batch',
+        )
 
     for (n1, n2, _, params) in prompts:
         parser.add_argument(n1, n2, **params)
@@ -207,4 +207,3 @@ def main(args=None):
 
 if __name__ == '__main__':
     main()
-
