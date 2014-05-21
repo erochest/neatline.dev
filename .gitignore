@@ -1,2 +1,4 @@
 .vagrant
 Omeka/
+.Python
+bin/
