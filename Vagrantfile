@@ -14,6 +14,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       :omekaversion => '2.1-stable',
       :debug        => false,
       :hostname     => 'localhost',
+      :neatlinerepo => 'https://github.com/scholarslab/Neatline.git',
+      # :neatlinerepo => 'git@github.com:scholarslab/Neatline.git',
     }
   end
 end

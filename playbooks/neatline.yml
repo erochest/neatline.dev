@@ -1,0 +1,8 @@
+---
+- hosts: all
+  tasks:
+    - name: git clone Neatline
+      git: repo={{ neatlinerepo }}
+           dest={{ omekadir }}/plugins/Neatline
+           recursive=yes
+      sudo: true
