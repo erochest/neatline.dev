@@ -13,7 +13,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       :omekadir     => '/var/www/omeka',
       :omekaversion => '2.1-stable',
       :debug        => false,
-      :hostname     => 'localhost',
+      :hostname     => 'neatline.dev',
       :neatlinerepo => 'https://github.com/scholarslab/Neatline.git',
       # :neatlinerepo => 'git@github.com:scholarslab/Neatline.git',
     }
