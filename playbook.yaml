@@ -10,6 +10,7 @@
     omeka_dir: /Users/err8n/omeka/neatlinedev
     omeka_version: stable-2.1
     debug: true
+    neatline_repo: git@github.com:scholarslab/Neatline.git
   tasks:
     - name: Tap PHP kegs.
       homebrew_tap: tap=homebrew/php state=present
@@ -19,6 +20,9 @@
         - mysql
         - imagemagick
         - git
+        - git-flow
+        - node
+        - phantomjs
     - name: Start MySQL
       shell: mysql.server start
     - name: Install Python MySQLdb
@@ -134,3 +138,30 @@
         line='\1'
     - name: files
       file: path={{ omeka_dir }}/files recurse=yes mode=0777
+    - name: Download Neatline
+      git: >
+        repo="{{ neatline_repo }}"
+        dest="{{ omeka_dir }}/plugins/Neatline"
+        recursive=yes
+    - name: git checkout develop
+      command: git checkout develop chdir="{{ omeka_dir }}/plugins/Neatline"
+    - name: git flow init
+      command: git flow init -d chdir="{{ omeka_dir }}/plugins/Neatline"
+    - name: Install JS Tools
+      npm: name={{ item }} global=yes
+      with_items:
+        - grunt-cli
+        - bower
+    - name: Install JS dependencies
+      npm: path="{{ omeka_dir }}/plugins/Neatline"
+    - name: Install JS packages
+      shell: bower install chdir="{{ omeka_dir }}/plugins/Neatline"
+    - name: Install composer
+      shell: >
+        curl -sS https://getcomposer.org/installer | php
+        chdir="{{ omeka_dir }}/plugins/Neatline"
+        creates="{{ omeka_dir }}/plugins/Neatline/composer.phar"
+    - name: composer install
+      shell: >
+        php composer.phar install
+        chdir="{{ omeka_dir }}/plugins/Neatline"
