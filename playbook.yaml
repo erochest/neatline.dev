@@ -1,0 +1,50 @@
+---
+- hosts: all
+  vars:
+    db_user: root
+    db_password:
+    omeka_db_user: omeka
+    omeka_db_password: omeka
+    omeka_db_name: omeka
+    php_version: 55
+    dev_hostname: omeka-neatline.dev
+  tasks:
+    - name: Tap PHP kegs.
+      homebrew_tap: tap=homebrew/php state=present
+    - name: Install homebrew packages
+      homebrew: name={{ item }} state=latest update_homebrew=yes
+      with_items:
+        - mysql
+        - imagemagick
+        - git
+        - php{{ php_version }}
+        - php{{ php_version }}-xdebug
+        - phpcpd
+        - composer
+    - name: Start MySQL
+      shell: mysql.server start
+    - name: Install Python MySQLdb
+      pip: name=MySQL-python state=latest
+    - name: Create Omeka DB user
+      mysql_user: name={{ omeka_db_user }}
+                  password={{ omeka_db_password }}
+                  state=present
+                  priv=*.*:ALL
+                  login_user={{ db_user }}
+                  login_password={{ db_password }}
+    - name: Create Omeka DB
+      mysql_db: name={{ omeka_db_name }}
+                login_user={{ omeka_db_user }}
+                login_password={{ omeka_db_password }}
+                state=present
+    - name: Create Omeka test DB
+      mysql_db: name=test_{{ omeka_db_name }}
+                login_user={{ omeka_db_user }}
+                login_password={{ omeka_db_password }}
+                state=present
+    - name: Add {{ dev_hostname }} to /etc/hosts
+      lineinfile: dest=/etc/hosts
+                  insertafter=EOF
+                  line="{{ dev_hostname }}    127.0.0.1"
+                  state=present
+      sudo: yes
