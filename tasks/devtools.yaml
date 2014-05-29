@@ -1,0 +1,23 @@
+---
+- name: git checkout develop
+  command: git checkout develop chdir="{{ omeka_dir }}/plugins/Neatline"
+- name: git flow init
+  command: git flow init -d chdir="{{ omeka_dir }}/plugins/Neatline"
+- name: Install JS Tools
+  npm: name={{ item }} global=yes
+  with_items:
+    - grunt-cli
+    - bower
+- name: Install JS dependencies
+  npm: path="{{ omeka_dir }}/plugins/Neatline"
+- name: Install JS packages
+  shell: bower install chdir="{{ omeka_dir }}/plugins/Neatline"
+- name: Install composer
+  shell: >
+    curl -sS https://getcomposer.org/installer | php
+    chdir="{{ omeka_dir }}/plugins/Neatline"
+    creates="{{ omeka_dir }}/plugins/Neatline/composer.phar"
+- name: composer install
+  shell: >
+    php composer.phar install
+    chdir="{{ omeka_dir }}/plugins/Neatline"

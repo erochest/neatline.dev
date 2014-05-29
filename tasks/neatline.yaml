@@ -1,0 +1,6 @@
+---
+- name: Download Neatline
+  git: >
+    repo="{{ neatline_repo }}"
+    dest="{{ omeka_dir }}/plugins/Neatline"
+    recursive=yes

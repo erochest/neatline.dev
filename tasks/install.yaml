@@ -1,0 +1,14 @@
+---
+- name: Tap PHP kegs.
+  homebrew_tap: tap=homebrew/php state=present
+- name: Install homebrew packages
+  homebrew: name={{ item }} state=latest update_homebrew=yes
+  with_items:
+    - mysql
+    - imagemagick
+    - git
+    - git-flow
+    - node
+    - phantomjs
+- name: Install Python MySQLdb
+  pip: name=MySQL-python state=latest

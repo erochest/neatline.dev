@@ -1,0 +1,23 @@
+---
+- name: Start MySQL
+  shell: mysql.server start
+- name: Create Omeka DB user
+  mysql_user: >
+    name={{ omeka_db_user }}
+    password={{ omeka_db_password }}
+    state=present
+    priv=*.*:ALL
+    login_user={{ db_user }}
+    login_password={{ db_password }}
+- name: Create Omeka DB
+  mysql_db: >
+    name={{ omeka_db_name }}
+    login_user={{ omeka_db_user }}
+    login_password={{ omeka_db_password }}
+    state=present
+- name: Create Omeka test DB
+  mysql_db: >
+    name=test_{{ omeka_db_name }}
+    login_user={{ omeka_db_user }}
+    login_password={{ omeka_db_password }}
+    state=present

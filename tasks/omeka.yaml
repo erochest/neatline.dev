@@ -1,0 +1,52 @@
+---
+- name: Download Omeka
+  git: >
+    repo=https://github.com/omeka/Omeka.git
+    version={{ omeka_version }}
+    dest={{ omeka_dir }}
+    recursive=yes
+- name: omeka/db.ini
+  template: src=templates/db.ini.j2 dest={{ omeka_dir }}/db.ini
+- name: cp config.ini
+  command: cp {{ omeka_dir }}/application/config/config.ini.changeme {{ omeka_dir }}/application/config/config.ini
+- name: config.ini debug
+  ini_file: >
+    dest={{ omeka_dir }}/application/config/config.ini
+    section=site
+    option=debug.exceptions
+    value={{ debug }}
+- name: cp tests/config.ini
+  command: cp {{ omeka_dir }}/application/tests/config.ini.changeme {{ omeka_dir }}/application/tests/config.ini
+- name: tests/config.ini db.username
+  ini_file: >
+    dest={{ omeka_dir }}/application/tests/config.ini
+    section=testing
+    option=db.username
+    value={{ omeka_db_name }}
+- name: tests/config.ini db.password
+  ini_file: >
+    dest={{ omeka_dir }}/application/tests/config.ini
+    section=testing
+    option=db.password
+    value={{ omeka_db_password }}
+- name: tests/config.ini db.dbname
+  ini_file: >
+    dest={{ omeka_dir }}/application/tests/config.ini
+    section=testing
+    option=db.dbname
+    value=test_{{ omeka_db_name }}
+- name: .htaccess
+  command: cp {{ omeka_dir }}/.htaccess.changeme {{ omeka_dir }}/.htaccess
+- name: MySQL socket fix
+  lineinfile: >
+    dest="{{ omeka_dir }}/.htaccess"
+    insertafter="^<IfModule mod_php5.c>"
+    line='    php_value mysqli.default_socket "/tmp/mysql.sock"'
+- name: APPLICATION_ENV
+  lineinfile: >
+    dest={{ omeka_dir }}/.htaccess
+    backrefs=yes
+    regexp='# (SetEnv APPLICATION_ENV .*)'
+    line='\1'
+- name: files
+  file: path={{ omeka_dir }}/files recurse=yes mode=0777
