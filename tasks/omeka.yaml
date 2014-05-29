@@ -5,6 +5,8 @@
     version={{ omeka_version }}
     dest={{ omeka_dir }}
     recursive=yes
+- name: git submodule update
+  shell: git submodule update chdir="{{ omeka_dir }}"
 - name: omeka/db.ini
   template: src=templates/db.ini.j2 dest={{ omeka_dir }}/db.ini
 - name: cp config.ini
