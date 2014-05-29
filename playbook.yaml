@@ -6,8 +6,8 @@
     omeka_db_user: omeka
     omeka_db_password: omeka
     omeka_db_name: omeka
-    php_version: 55
     dev_hostname: omeka-neatline.dev
+    omeka_dir: /Users/err8n/omeka/neatlinedev
   tasks:
     - name: Tap PHP kegs.
       homebrew_tap: tap=homebrew/php state=present
@@ -17,34 +17,67 @@
         - mysql
         - imagemagick
         - git
-        - php{{ php_version }}
-        - php{{ php_version }}-xdebug
-        - phpcpd
-        - composer
     - name: Start MySQL
       shell: mysql.server start
     - name: Install Python MySQLdb
       pip: name=MySQL-python state=latest
     - name: Create Omeka DB user
-      mysql_user: name={{ omeka_db_user }}
-                  password={{ omeka_db_password }}
-                  state=present
-                  priv=*.*:ALL
-                  login_user={{ db_user }}
-                  login_password={{ db_password }}
+      mysql_user: >
+        name={{ omeka_db_user }}
+        password={{ omeka_db_password }}
+        state=present
+        priv=*.*:ALL
+        login_user={{ db_user }}
+        login_password={{ db_password }}
     - name: Create Omeka DB
-      mysql_db: name={{ omeka_db_name }}
-                login_user={{ omeka_db_user }}
-                login_password={{ omeka_db_password }}
-                state=present
+      mysql_db: >
+        name={{ omeka_db_name }}
+        login_user={{ omeka_db_user }}
+        login_password={{ omeka_db_password }}
+        state=present
     - name: Create Omeka test DB
-      mysql_db: name=test_{{ omeka_db_name }}
-                login_user={{ omeka_db_user }}
-                login_password={{ omeka_db_password }}
-                state=present
+      mysql_db: >
+        name=test_{{ omeka_db_name }}
+        login_user={{ omeka_db_user }}
+        login_password={{ omeka_db_password }}
+        state=present
     - name: Add {{ dev_hostname }} to /etc/hosts
-      lineinfile: dest=/etc/hosts
-                  insertafter=EOF
-                  line="{{ dev_hostname }}    127.0.0.1"
-                  state=present
+      lineinfile: >
+        dest=/private/etc/hosts
+        insertafter=EOF
+        line="127.0.0.1    {{ dev_hostname }}"
+        state=present
+      sudo: yes
+    - name: Enable mod php5 for Apache
+      lineinfile: >
+        dest=/private/etc/apache2/httpd.conf
+        line="\1"
+        regexp="#(LoadModule php5_module libexec/apache2/libphp5\.so)"
+        backrefs=yes
+        state=present
+      sudo: yes
+    - name: Enable index.php
+      lineinfile: >
+        dest=/private/etc/apache2/httpd.conf
+        line="\1 index.php"
+        regexp="^(\s*DirectoryIndex index.html)$"
+        backrefs=yes
+        state=present
+      sudo: yes
+    - name: AllowOverride All
+      script: scripts/allowoverride.py /private/etc/apache2/httpd.conf
+      sudo: yes
+    - name: Enable Virtual Hosts
+      lineinfile: >
+        dest=/private/etc/apache2/httpd.conf
+        line="\1"
+        regexp="#(Include /private/etc/apache2/extra/httpd-vhosts.conf)"
+        backrefs=yes
+        state=present
+      sudo: yes
+    - name: Set up the Virtual Host
+      script: scripts/vhost.py /private/etc/apache2/extra/httpd-vhosts.conf {{ dev_hostname }} {{ omeka_dir }}
+      sudo: yes
+    - name: Restart Apache
+      shell: apachectl restart
       sudo: yes
