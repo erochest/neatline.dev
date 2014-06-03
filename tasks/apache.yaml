@@ -6,6 +6,14 @@
     line="127.0.0.1    {{ dev_hostname }}"
     state=present
   sudo: yes
+- name: Enable mod rewrite for Apache
+  lineinfile: >
+    dest=/private/etc/apache2/httpd.conf
+    line="\1"
+    regexp="#(LoadModule rewrite_module libexec/apache2/mod_rewrite\.so)"
+    backrefs=yes
+    state=present
+  sudo: yes
 - name: Enable mod php5 for Apache
   lineinfile: >
     dest=/private/etc/apache2/httpd.conf
