@@ -7,7 +7,7 @@
     omeka_db_password: omeka
     omeka_db_name: omeka
     dev_hostname: omeka-neatline.dev
-    omeka_dir: ~/omeka/neatlinedev
+    omeka_dir: "{{ ansible_env.HOME }}/omeka/neatlinedev"
     omeka_version: stable-2.1
     debug: true
     neatline_repo: git@github.com:scholarslab/Neatline.git
