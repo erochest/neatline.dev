@@ -11,6 +11,7 @@
     omeka_version: stable-2.1
     debug: true
     neatline_repo: git@github.com:scholarslab/Neatline.git
+    php_version: 55
   tasks:
     - include: tasks/install.yaml
     - include: tasks/mysql.yaml

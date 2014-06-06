@@ -12,12 +12,7 @@
   npm: path="{{ omeka_dir }}/plugins/Neatline"
 - name: Install JS packages
   shell: bower install chdir="{{ omeka_dir }}/plugins/Neatline"
-- name: Install composer
-  shell: >
-    curl -sS https://getcomposer.org/installer | php
-    chdir="{{ omeka_dir }}/plugins/Neatline"
-    creates="{{ omeka_dir }}/plugins/Neatline/composer.phar"
 - name: composer install
   shell: >
-    php composer.phar install
+    composer install
     chdir="{{ omeka_dir }}/plugins/Neatline"
