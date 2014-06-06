@@ -1,4 +1,14 @@
 ---
+- name: Create LaunchAgents directory
+  file: >
+    path={{ ansible_env.HOME }}/Library/LaunchAgents
+    state=directory
+- name: Set up MySQL to launch at start-up
+  file: >
+    src=/usr/local/opt/mysql/homebrew.mxcl.mysql.plist
+    path={{ ansible_env.HOME }}/Library/LaunchAgents/homebrew.mxcl.mysql.plist
+    state=link
+    force=yes
 - name: Start MySQL
   shell: mysql.server start
 - name: Create Omeka DB user
